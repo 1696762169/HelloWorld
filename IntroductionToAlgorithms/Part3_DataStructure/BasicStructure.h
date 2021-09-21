@@ -70,7 +70,7 @@ public:
 };
 // 链表类
 template<class T> 
-class myList : public myNode<T>
+class myList
 {
 public:
 	myList();
@@ -81,4 +81,25 @@ public:
 	void del(myNode<T>* node);
 private:
 	myNode<T>* m_nil;
+};
+
+// 使用数组实现链表类
+template<class T>
+class VList
+{
+public:
+	VList(int len);
+	~VList();
+	void allocateObject(T elem);
+	void freeObject(int no);
+	void for_each();
+	int search(T elem);
+	
+//private:
+public:
+	int m_size;
+	int m_free;
+	int* m_next_v;
+	T* m_key_v;
+	int* m_prev_v;
 };

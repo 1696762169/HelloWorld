@@ -116,7 +116,7 @@ myList<T>::~myList() // 析构函数
 {
 	while (m_nil->m_next != m_nil)
 	{
-		cout << m_nil->m_next->m_key << endl;
+		//cout << m_nil->m_next->m_key << endl;
 		del(m_nil->m_next);
 	}
 	del(m_nil);
@@ -146,6 +146,87 @@ void myList<T>::del(myNode<T>* node) // 删除
 	node->m_next->m_prev = node->m_prev;
 	node->m_prev->m_next = node->m_next;
 	delete node;
+}
+
+// 使用数组实现链表类
+template<class T>
+VList<T>::VList(int len) // 构造函数
+{
+	m_size = 0;
+	m_free = 0;
+	m_next_v = new int[len + 1];
+	m_key_v = new T[len + 1];
+	m_prev_v = new int[len + 1];
+	for (int i = 0; i < len; ++i)
+	{
+		m_next_v[i] = i + 1;
+		//m_prev_v[i + 1] = i;
+	}
+	m_next_v[len] = 0;
+	//m_prev_v[0] = len;
+}
+template<class T>
+VList<T>::~VList() // 析构函数
+{
+	if (m_next_v != NULL)
+	{
+		delete[] m_next_v;
+	}
+	if (m_key_v != NULL)
+	{
+		delete[] m_key_v;
+	}
+	if (m_prev_v != NULL)
+	{
+		delete[] m_prev_v;
+	}
+}
+template<class T>
+void VList<T>::allocateObject(T elem) // 插入（分配空间）
+{
+	m_key_v[m_free] = elem;
+	m_prev_v[m_next_v[m_free]] = m_free;
+	m_free = m_next_v[m_free];
+	++m_size;
+}
+template<class T>
+void VList<T>::freeObject(int no) // 删除（释放空间）
+{
+	m_next_v[m_prev_v[no]] = m_next_v[no];
+	m_prev_v[m_next_v[no]] = m_prev_v[no];
+
+	m_next_v[m_prev_v[m_free]] = no;
+	m_prev_v[no] = m_prev_v[m_free];
+
+	m_prev_v[m_free] = no;
+	m_next_v[no] = m_free;
+	
+	m_free = no;
+	--m_size;
+}
+template<class T>
+void VList<T>::for_each() // 遍历元素
+{
+	int p = m_free;
+	for (int i = 0; i < m_size; ++i)
+	{
+		p = m_prev_v[p];
+		cout << m_key_v[p] << endl;
+	}
+}
+template<class T>
+int VList<T>::search(T elem) // 查找元素
+{
+	int p = m_free;
+	for (int i = 0; i < m_size; ++i)
+	{
+		p = m_prev_v[p];
+		if (m_key_v[p] == elem)
+		{
+			return p;
+		}
+	}
+	return 0;
 }
 
 void basicStructure()
@@ -186,10 +267,27 @@ void basicStructure()
 	}*/
 
 	// 链表测试
-	myList<int> l;
+	/*myList<int> l;
 	for (int i = 0; i < 13; ++i)
 	{
 		l.insert(i);
 		cout << i << endl;
 	}
+	l.del(l.search(10));*/
+
+	// 数组型链表测试
+	VList<int> vl(capacity);
+	for (int i = 0; i < capacity + 1; ++i)
+	{
+		vl.allocateObject(i);
+	}
+	vl.freeObject(3);
+	vl.freeObject(5);
+	vl.allocateObject(100);
+	vl.allocateObject(100000);
+	vl.for_each();
+	cout << "-----------" << endl;
+	vl.freeObject(vl.search(100));
+	//vl.freeObject(vl.search(100000));
+	vl.for_each();
 }
