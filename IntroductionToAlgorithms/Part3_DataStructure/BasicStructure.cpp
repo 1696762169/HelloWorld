@@ -184,23 +184,27 @@ VList<T>::~VList() // 析构函数
 template<class T>
 void VList<T>::allocateObject(T elem) // 插入（分配空间）
 {
+	// 为新增节点赋值
 	m_key_v[m_free] = elem;
+	// 新增节点与上一个已使用节点链接
 	m_prev_v[m_next_v[m_free]] = m_free;
+	// 移动free“指针”至下一个未使用节点
 	m_free = m_next_v[m_free];
 	++m_size;
 }
 template<class T>
 void VList<T>::freeObject(int no) // 删除（释放空间）
 {
+	// 删除节点的前后节点相互链接
 	m_next_v[m_prev_v[no]] = m_next_v[no];
 	m_prev_v[m_next_v[no]] = m_prev_v[no];
-
+	// 删除节点与最后一个已使用节点链接
 	m_next_v[m_prev_v[m_free]] = no;
 	m_prev_v[no] = m_prev_v[m_free];
-
+	// 删除节点作为新的未使用节点，与上一个未使用节点链接
 	m_prev_v[m_free] = no;
 	m_next_v[no] = m_free;
-	
+	// 移动free“指针”
 	m_free = no;
 	--m_size;
 }
@@ -288,6 +292,6 @@ void basicStructure()
 	vl.for_each();
 	cout << "-----------" << endl;
 	vl.freeObject(vl.search(100));
-	//vl.freeObject(vl.search(100000));
+	vl.freeObject(vl.search(100000));
 	vl.for_each();
 }

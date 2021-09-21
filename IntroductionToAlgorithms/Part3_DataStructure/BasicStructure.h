@@ -95,8 +95,7 @@ public:
 	void for_each();
 	int search(T elem);
 	
-//private:
-public:
+private:
 	int m_size;
 	int m_free;
 	int* m_next_v;
