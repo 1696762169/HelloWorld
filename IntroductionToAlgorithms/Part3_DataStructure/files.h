@@ -1,4 +1,3 @@
 #pragma once
 
-
-; void basicStructure();
+void basicStructure();

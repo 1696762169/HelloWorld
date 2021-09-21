@@ -44,4 +44,41 @@ private:
 	T* m_queue;
 	T* m_out;
 	T* m_in;
-}
+};
+
+// 为链表类准备的节点类
+template<class T>
+class myNode
+{
+public:
+	myNode()
+	{
+		m_key = NULL;
+		m_prev = NULL;
+		m_next = NULL;
+	}
+	myNode(T key)
+	{
+		m_key = key;
+		m_prev = NULL;
+		m_next = NULL;
+	}
+
+	T m_key;
+	myNode<T>* m_prev;
+	myNode<T>* m_next;
+};
+// 链表类
+template<class T> 
+class myList : public myNode<T>
+{
+public:
+	myList();
+	~myList();
+
+	myNode<T>* search(T key);
+	void insert(T key);
+	void del(myNode<T>* node);
+private:
+	myNode<T>* m_nil;
+};

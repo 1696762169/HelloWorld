@@ -103,12 +103,57 @@ T myQueue<T>::m_tail() // 访问队尾元素
 	return *(m_in - 1);
 }
 
+// 链表功能的实现
+template<class T>
+myList<T>::myList() // 构造函数
+{
+	m_nil = new myNode<T>;
+	(*m_nil).m_prev = m_nil;
+	(*m_nil).m_next = m_nil;
+}
+template<class T>
+myList<T>::~myList() // 析构函数
+{
+	while (m_nil->m_next != m_nil)
+	{
+		cout << m_nil->m_next->m_key << endl;
+		del(m_nil->m_next);
+	}
+	del(m_nil);
+}
+template<class T>
+myNode<T>* myList<T>::search(T key) // 查找
+{
+	myNode<T>* sp = m_nil->m_next;
+	while (sp != m_nil && sp->m_key != key)
+	{
+		sp = sp->m_next;
+	}
+	return sp;
+}
+template<class T>
+void myList<T>::insert(T key) // 插入(头插)
+{
+	myNode<T>* node = new myNode<T>(key);
+	node->m_next = m_nil->m_next;
+	node->m_prev = m_nil;
+	m_nil->m_next->m_prev = node;
+	m_nil->m_next = node;
+}
+template<class T>
+void myList<T>::del(myNode<T>* node) // 删除
+{
+	node->m_next->m_prev = node->m_prev;
+	node->m_prev->m_next = node->m_next;
+	delete node;
+}
+
 void basicStructure()
 {
 	int capacity = 10;
 
 	// 栈测试
-	myStack<int> s(capacity);
+	/*myStack<int> s(capacity);
 	for (int i = 0; i < capacity; ++i)
 	{
 		s.push(i);
@@ -119,10 +164,10 @@ void basicStructure()
 	{
 		cout << s.pop() << endl;
 	}
-	cout << "-----------" << endl;
+	cout << "-----------" << endl;*/
 
 	// 队列测试
-	myQueue<int> q(capacity);
+	/*myQueue<int> q(capacity);
 	for (int i = 0; i < capacity; ++i)
 	{
 		q.enqueue(i);
@@ -138,6 +183,13 @@ void basicStructure()
 	{
 		q.enqueue(i);
 		cout << q.m_tail() << endl;
-	}
+	}*/
 
+	// 链表测试
+	myList<int> l;
+	for (int i = 0; i < 13; ++i)
+	{
+		l.insert(i);
+		cout << i << endl;
+	}
 }
