@@ -107,7 +107,7 @@ T myQueue<T>::m_tail() // 访问队尾元素
 template<class T>
 myList<T>::myList() // 构造函数
 {
-	m_nil = new myNode<T>;
+	m_nil = new myListNode<T>;
 	(*m_nil).m_prev = m_nil;
 	(*m_nil).m_next = m_nil;
 }
@@ -122,9 +122,9 @@ myList<T>::~myList() // 析构函数
 	del(m_nil);
 }
 template<class T>
-myNode<T>* myList<T>::search(T key) // 查找
+myListNode<T>* myList<T>::search(T key) // 查找
 {
-	myNode<T>* sp = m_nil->m_next;
+	myListNode<T>* sp = m_nil->m_next;
 	while (sp != m_nil && sp->m_key != key)
 	{
 		sp = sp->m_next;
@@ -134,14 +134,14 @@ myNode<T>* myList<T>::search(T key) // 查找
 template<class T>
 void myList<T>::insert(T key) // 插入(头插)
 {
-	myNode<T>* node = new myNode<T>(key);
+	myListNode<T>* node = new myListNode<T>(key);
 	node->m_next = m_nil->m_next;
 	node->m_prev = m_nil;
 	m_nil->m_next->m_prev = node;
 	m_nil->m_next = node;
 }
 template<class T>
-void myList<T>::del(myNode<T>* node) // 删除
+void myList<T>::del(myListNode<T>* node) // 删除
 {
 	node->m_next->m_prev = node->m_prev;
 	node->m_prev->m_next = node->m_next;
@@ -233,6 +233,135 @@ int VList<T>::search(T elem) // 查找元素
 	return 0;
 }
 
+// 二叉树类
+template<class T>
+myBinaryTree<T>::myBinaryTree() // 构造函数
+{
+	m_root = new myBTNode<T>;
+}
+template<class T>
+myBinaryTree<T>::~myBinaryTree() // 析构函数
+{
+	if (m_root != NULL)
+	{
+		for_each(m_root, &deleteNode);
+		deleteNode(m_root);
+	}
+}
+template<class T>
+void myBinaryTree<T>::addLeft(T key, myBTNode<T>* parent) // 添加左节点
+{
+	if (parent == NULL)
+		return;
+	parent->m_lc = new myBTNode<T>;
+	parent->m_lc->m_p = parent;
+	parent->m_lc->m_key = key;
+}
+template<class T>
+void myBinaryTree<T>::addRight(T key, myBTNode<T>* parent) // 添加右节点
+{
+	if (parent == NULL)
+		return;
+	parent->m_rc = new myBTNode<T>;
+	parent->m_rc->m_p = parent;
+	parent->m_rc->m_key = key;
+}
+template<class T>
+void myBinaryTree<T>::for_each(myBTNode<T>* doing, void(*f)(myBTNode<T>* d)) // 遍历节点
+{
+	if (doing->m_lc != NULL) // 访问左节点
+	{
+		for_each(doing->m_lc, f);
+	}
+	if (doing->m_rc != NULL) // 访问右节点
+	{
+		for_each(doing->m_rc, f);
+	}
+	if (doing != m_root) // 执行操作
+	{
+		f(doing);
+	}
+}
+template<class T>
+void myBinaryTree<T>::print_key(myBTNode<T>* doing) // 输出节点的值
+{
+	cout << doing->m_key << endl;
+}
+template<class T>
+void myBinaryTree<T>::deleteNode(myBTNode<T>* doing) // 删除节点
+{
+	delete doing;
+	doing = NULL;
+}
+
+// 无限分支树类
+template<class T>
+myTree<T>::myTree() // 构造函数
+{
+	m_root = new myTreeNode<T>;
+}
+template<class T>
+myTree<T>::~myTree() // 析构函数
+{
+	if (m_root != NULL)
+	{
+		for_each(m_root, &deleteNode);
+		deleteNode(m_root);
+	}
+}
+template<class T>
+void myTree<T>::addchild(T key, myTreeNode<T>* parent) // 添加子节点
+{
+	if (parent == NULL)
+		return;
+	if (parent->m_child == NULL)
+	{
+		parent->m_child = new myTreeNode<T>;
+		parent->m_child->m_p = parent;
+		parent->m_child->m_key = key;
+	}
+	else
+	{
+		myTreeNode<T>* newc = parent->m_child;
+		while (newc->m_sib != NULL)
+		{
+			newc = newc->m_sib;
+		}
+		newc->m_sib = new myTreeNode<T>;
+		newc = newc->m_sib;
+		newc->m_p = parent;
+		newc->m_key = key;
+	}
+}
+template<class T>
+void myTree<T>::for_each(myTreeNode<T>* doing, void(*f)(myTreeNode<T>* d)) // 遍历节点
+{
+	if (doing->m_child != NULL) // 访问子节点
+	{
+		for_each(doing->m_child, f);
+	}
+	if (doing->m_sib != NULL) // 访问同级节点
+	{
+		for_each(doing->m_sib, f);
+	}
+	if (doing != m_root) // 执行操作
+	{
+		f(doing);
+	}
+}
+template<class T>
+void myTree<T>::print_key(myTreeNode<T>* doing) // 输出节点值
+{
+	cout << doing->m_key << endl;
+}
+template<class T>
+void myTree<T>::deleteNode(myTreeNode<T>* doing) // 删除节点
+{
+	delete doing;
+	doing = NULL;
+	cout << "阿巴阿巴" << endl;
+}
+
 void basicStructure()
 {
 	int capacity = 10;
@@ -280,7 +409,7 @@ void basicStructure()
 	l.del(l.search(10));*/
 
 	// 数组型链表测试
-	VList<int> vl(capacity);
+	/*VList<int> vl(capacity);
 	for (int i = 0; i < capacity + 1; ++i)
 	{
 		vl.allocateObject(i);
@@ -293,5 +422,27 @@ void basicStructure()
 	cout << "-----------" << endl;
 	vl.freeObject(vl.search(100));
 	vl.freeObject(vl.search(100000));
-	vl.for_each();
+	vl.for_each();*/
+
+	// 二叉树类测试
+	/*myBinaryTree<string> bt;
+	bt.addLeft("L", bt.m_root);
+	bt.addRight("R", bt.m_root);
+	bt.addLeft("LL", bt.m_root->m_lc);
+	bt.addLeft("RL", bt.m_root->m_rc);
+	bt.addRight("LR", bt.m_root->m_lc);
+	bt.addRight("RR", bt.m_root->m_rc);
+	bt.for_each(bt.m_root, &(bt.print_key));*/
+
+	// 无限分支树测试
+	myTree<string> t;
+	t.addchild("C1", t.m_root);
+	t.addchild("C2", t.m_root);
+	t.addchild("C3", t.m_root);
+	t.addchild("C1C1", t.m_root->m_child);
+	t.addchild("C1C2", t.m_root->m_child);
+	t.addchild("C3C1", t.m_root->m_child->m_sib->m_sib);
+	t.addchild("C3C2", t.m_root->m_child->m_sib->m_sib);
+	t.addchild("C3C3", t.m_root->m_child->m_sib->m_sib);
+	t.for_each(t.m_root, &(t.print_key));
 }
